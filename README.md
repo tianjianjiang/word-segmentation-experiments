@@ -7,17 +7,17 @@
 4. [conlleval.pl](http://www.cnts.ua.ac.be/conll2000/chunking/conlleval.txt)
 
 ### hypothesis
-Characters of a word have *something* in common
-(Before someone measure it, every character was in superposition state)
+Characters of a word have *something* in common.  
+(Or: before someone measure it, every character was in superposition state)
 
 ### feature design
 For example:
 * Given a three-character string ABC
 * B's features are
-  * *something*(B) **OP** *something*(A) **OP** *something*(C)
-  * *something*(B) **OP** __~__*something*(A) **OP** *something*(C)
-  * *something*(B) **OP** *something*(A) **OP** __~__*something*(C)
-  * *something*(B) **OP** __~__*something*(A) **OP** __~__*something*(C)
+  * *something*(B) **OP** *something*(A)&nbsp;&nbsp;&nbsp;**OP** *something*(C)
+  * *something*(B) **OP** __~__*something*(A)&nbsp;**OP** *something*(C)
+  * *something*(B) **OP** *something*(A)&nbsp;&nbsp;&nbsp;**OP** __~__*something*(C)
+  * *something*(B) **OP** __~__*something*(A)&nbsp;**OP** __~__*something*(C)
 
 ### experiment design
 * *something*: word2vec character-embeddings
