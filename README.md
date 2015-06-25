@@ -8,24 +8,28 @@
 
 ### hypothesis
 Characters of a word have *something* in common
+(Before someone measure it, every character was in superposition state)
 
 ### feature design
+For example:
 * Given a three-character string ABC
 * B's features are
-  * *something*(A) **OP** *something*(B) **OP** *something*(C)
-  * __~__*something*(A) **OP** *something*(B) **OP** *something*(C)
-  * *something*(A) **OP** *something*(B) **OP** __~__*something*(C)
-  * __~__*something*(A) **OP** *something*(B) **OP** __~__*something*(C)
+  * *something*(B) **OP** *something*(A) **OP** *something*(C)
+  * *something*(B) **OP** __~__*something*(A) **OP** *something*(C)
+  * *something*(B) **OP** *something*(A) **OP** __~__*something*(C)
+  * *something*(B) **OP** __~__*something*(A) **OP** __~__*something*(C)
 
 ### experiment design
 * *something*: word2vec character-embeddings
 * **OP**: cosadd or cosmul
+* __~__: negation
 
 ### todo
 * Tensor-based embeddings
-* Define __~__
-* Better negative-sampling
-
+  * Better negative-sampling 
+* Better __~__
+* Induce morphosyntactical category of characters
+ 
 ### references
 * [Tensor Network and Natural Language](https://hackpad.com/Tensor-Network-and-Natural-Language-zkA5N1DcnYT)
 * [Evaluation via Negativa of Chinese Word Segmentation for Information Retrieval](https://www.researchgate.net/publication/264742378_Evaluation_via_Negativa_of_Chinese_Word_Segmentation_for_Information_Retrieval)
