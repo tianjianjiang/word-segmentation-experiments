@@ -11,10 +11,13 @@ window = int(sys.argv[3])
 negative = int(sys.argv[4])
 output = sys.argv[5]
 
-print('reading corpus...\n')
+print('reading char-delimited texts...')
 data = word2vec.LineSentence(filename)
-print('training...\n')
-model = word2vec.Word2Vec(sentences=data, size=size, window=window, min_count=1, workers=4, negative=negative)
-print('saving model...\n')
+print('done.')
+print('training...')
+model = word2vec.Word2Vec(sentences=data, size=size, window=window, min_count=1, workers=4,
+                          negative=negative)
+print('done.')
+print('saving model...')
 model.save(output)
-
+print('done.')
