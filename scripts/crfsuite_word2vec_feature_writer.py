@@ -11,6 +11,7 @@ class CrfsuiteWord2VecFeatureWriter:
         self.top_n = n
         self.add_or_mul = add_or_mul
         self.name_or_value = name_or_value
+        self.feature_cache = {}
 
     @staticmethod
     def formulate(center, left, right):
@@ -23,6 +24,18 @@ class CrfsuiteWord2VecFeatureWriter:
                         ([center, right], [left]), ([center, left, right], [])]
         return formulae
 
+    def get_most_similar(self, positives, negatives):
+        try:
+            if 'add' == self.add_or_mul:
+                e = self.model.most_similar(
+                    positives, negatives, self.top_n)
+            else:
+                e = self.model.most_similar_cosmul(
+                    positives, negatives, self.top_n)
+        except KeyError:
+            e = None
+        return e
+
     def get_feature(self, center, left, right):
         f = CrfsuiteWord2VecFeatureWriter.formulate(center, left, right)
         f_index = 0
@@ -30,21 +43,15 @@ class CrfsuiteWord2VecFeatureWriter:
             positives = formula[0]
             negatives = formula[1]
             f_index += 1
-            if self.add_or_mul == 'add':
-                try:
-                    e = self.model.most_similar(
-                        positives, negatives, self.top_n)
-                except KeyError:
-                    e = None
+            cache_key = repr(positives) + repr(negatives)
+            if cache_key not in self.feature_cache:
+                e = self.get_most_similar(positives, negatives)
+                self.feature_cache[cache_key] = e
             else:
-                try:
-                    e = self.model.most_similar_cosmul(
-                        positives, negatives, self.top_n)
-                except KeyError:
-                    e = None
+                e = self.feature_cache[cache_key]
             if e is not None:
                 for j in range(self.top_n):
-                    if self.name_or_value == 'name':
+                    if 'name' == self.name_or_value:
                         yield 'U9%d%de=%s' % (f_index, j, e[j][0])
                     else:
                         yield 'U9%d%de=%s:%g' % (f_index, j, '1', e[j][1])
