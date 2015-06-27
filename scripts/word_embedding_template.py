@@ -81,21 +81,20 @@ charSeq = [d]
 modelFilePath = sys.argv[1]
 word2VecModel = Word2Vec.load(modelFilePath)
 trainingFilePath = sys.argv[2]
-trainingFile = open(trainingFilePath, 'rt')
+trainingFile = open(trainingFilePath, 'r')
 addOrMul = sys.argv[3]
 nameOrValue = sys.argv[4]
 labelFilePath = sys.argv[5]
-labelFile = open(labelFilePath, 'wt')
+labelFile = open(labelFilePath, 'w')
 for line in trainingFile:
-    line = line.strip('\n')
+    line = line.strip()
     if not line:
         charSeq.append(d)
         labels = output_features(charSeq, word2VecModel, addOrMul, nameOrValue)
-        labelFile.writelines(labels)
-        labelFile.write('\n')
+        labelFile.write(''.join(labels) + '\n')
         charSeq = [d]
     else:
-        fields = line.strip('\n').split('\t')
+        fields = line.split('\t')
         charSeq.append((encode(fields[0]), encode(fields[1])))
 labelFile.close()
 trainingFile.close()
