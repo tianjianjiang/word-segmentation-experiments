@@ -3,9 +3,8 @@
 ### prerequisite
 1. [CRFsuite](http://www.chokkan.org/software/crfsuite/)
 2. [gensim.models.word2vec](http://radimrehurek.com/gensim/models/word2vec.html)
-3. [The Second International Chinese Word Segmentation Bakeoff's data and score.pl](http://sighan.cs.uchicago.edu/bakeoff2005/)
-  * A known issue of `score.pl`: it uses GNU diffutils which isn't always reliable with encoding. Compare *Our Baseline/Topline* with *2005 Baseline/Topline* listed in the paper "[Enhancement of Feature Engineering for Conditional Random Field Learning in Chinese Word Segmentation Using Unlabeled Data][1]" to see how significant the impact is.
-4. [conlleval.pl](http://www.cnts.ua.ac.be/conll2000/chunking/conlleval.txt)
+3. [The Second International Chinese Word Segmentation Bakeoff's data and the Perl script `score`](http://sighan.cs.uchicago.edu/bakeoff2005/)
+  * A known issue of `score`: it uses GNU diffutils which isn't always reliable with encoding. Compare *Our Baseline/Topline* with *2005 Baseline/Topline* listed in the paper "[Enhancement of Feature Engineering for Conditional Random Field Learning in Chinese Word Segmentation Using Unlabeled Data][1]" to see how significant the impact is.
 
 ### hypothesis
 Characters of a word have *something* in common.  
@@ -33,7 +32,7 @@ control |.925  |.938     |.932
 cosmul  |.941  |.947     |.944
 
 ### todo
-* Replace `score.pl` with one respects character encoding<sup>[1]</sup> and supports full confusion matrix<sup>[2]</sup>.
+* Replace `score` with one respects character encoding<sup>[1]</sup> and supports full confusion matrix<sup>[2]</sup>.
 * Tensor-based embeddings<sup>[3]</sup>
   * Better negative-sampling<sup>[2]</sup>
 * Better __~__

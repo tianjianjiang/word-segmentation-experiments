@@ -1,11 +1,12 @@
 #!/bin/bash
-./word_embedding_template.py pku_training.utf8-char.txt-word2vec_d300w10n5.model ../control/pku_test_gold.utf8.label add name pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec.label
-./word_embedding_template.py pku_training.utf8-char.txt-word2vec_d300w10n5.model ../control/pku_training.utf8.label add name pku_training.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec.label
-crfsuite learn -m pku_training.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec-c100.model -a lbfgs -p c2=0.01 -p feature.possible_states=1 -p feature.possible_transitions=1 pku_training.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec.label
-crfsuite tag -m pku_training.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec-c100.model pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec.label | paste ../control/pku_test_gold.utf8.label - > pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec-c100.prediction
-crfsuite tag -r -m pku_training.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec-c100.model -qt pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec.label
-./conlleval.pl -r -d '\t' < pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec-c100.prediction > pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec-c100.eval
-cat pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec-c100.eval
-./concatenate_labeled_chars_to_word.py pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec-c100.prediction pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec-c100.result
-./score.pl ../dic/pku_training_words.utf8 ../gold/pku_test_gold.utf8 pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec-c100.result > pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec-c100.score
-tail pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosadd_name_3vec-c100.score
+./word_to_char_labeler.py ../icwb2-data/training/pku_training.utf8 ../control/pku_training.utf8.label
+./word_to_char_labeler.py ../icwb2-data/gold/pku_test_gold.utf8 ../control/pku_test_gold.utf8.label
+./char_delimiter.py ../icwb2-data/training/pku_training.utf8 ../char-delimited_texts/pku_training.utf8-char.txt
+./word2vec_model_trainer.py ../char-delimited_texts/pku_training.utf8-char.txt 300 10 5 ../word2vec_models/pku_training.utf8-char.txt-word2vec_d300w10n5.model
+./word_embedding_template.py ../word2vec_models/pku_training.utf8-char.txt-word2vec_d300w10n5.model ../control/pku_test_gold.utf8.label mul value ../exp/pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosmul_value_3vec.label
+./word_embedding_template.py ../word2vec_models/pku_training.utf8-char.txt-word2vec_d300w10n5.model ../control/pku_training.utf8.label mul value ../exp/pku_training.utf8.crfsuite-embedding_d300w10n5_cosmul_value_3vec.label
+crfsuite learn -m ../crfsuite_models/pku_training.utf8.crfsuite-embedding_d300w10n5_cosmul_value_3vec-c100.model -a lbfgs -p c2=0.01 -p feature.possible_states=1 -p feature.possible_transitions=1 ../exp/pku_training.utf8.crfsuite-embedding_d300w10n5_cosmul_value_3vec.label
+crfsuite tag -m ../crfsuite_models/pku_training.utf8.crfsuite-embedding_d300w10n5_cosmul_value_3vec-c100.model ../exp/pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosmul_value_3vec.label | paste ../control/pku_test_gold.utf8.label - > ../result/pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosmul_value_3vec-c100.prediction
+./concatenate_labeled_chars_to_word.py ../result/pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosmul_value_3vec-c100.prediction ../result/pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosmul_value_3vec-c100.result
+../icwb2-data/scripts/score ../icwb2-data/gold/pku_training_words.utf8 ../icwb2-data/gold/pku_test_gold.utf8 ../result/pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosmul_value_3vec-c100.result > ../result/pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosmul_value_3vec-c100.score
+tail ../result/pku_test_gold.utf8.crfsuite-embedding_d300w10n5_cosmul_value_3vec-c100.score
