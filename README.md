@@ -4,6 +4,7 @@
 1. [CRFsuite](http://www.chokkan.org/software/crfsuite/)
 2. [gensim.models.word2vec](http://radimrehurek.com/gensim/models/word2vec.html)
 3. [The Second International Chinese Word Segmentation Bakeoff's data and the Perl script `score`](http://sighan.cs.uchicago.edu/bakeoff2005/)
+  * Just download and extract http://sighan.cs.uchicago.edu/bakeoff2005/data/icwb2-data.rar wherever this project folder is.
   * A known issue of `score`: it uses GNU diffutils which isn't always reliable with encoding. Compare *Our Baseline/Topline* with *2005 Baseline/Topline* listed in the paper "[Enhancement of Feature Engineering for Conditional Random Field Learning in Chinese Word Segmentation Using Unlabeled Data][1]" to see how significant the impact is.
 
 ### hypothesis
