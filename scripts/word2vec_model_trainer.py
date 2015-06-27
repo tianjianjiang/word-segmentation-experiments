@@ -19,5 +19,6 @@ model = word2vec.Word2Vec(sentences=data, size=size, window=window, min_count=1,
                           negative=negative)
 print('done.')
 print('saving model...')
+model.init_sims(replace=True)
 model.save(output)
 print('done.')
