@@ -30,9 +30,9 @@ For example:
 Config  |Recall|Precision|F1
 --------|-----:|--------:|---:
 control |.925  |.938     |.932
-cosmul  |.941  |.947     |.944
+cosmul  |.942  |.948     |.945
 
-###### PKU 2005
+###### CityU 2005
 Config  |Recall|Precision|F1
 --------|-----:|--------:|---:
 cosmul  |.940  |.945     |.942
