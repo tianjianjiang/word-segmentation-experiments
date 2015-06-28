@@ -36,16 +36,22 @@ U20:%x[-1,0]/%x[1,0]
 * __~__: negation
 
 ### result
+* Control: L-BFGS, L2=0.01
+* Configurations:
+  1. word2vec dimension 300, window size 10, negative samples 5, cosmul-value
+  2. word2vec dimension 300, window size 3, negative samples 5, cosmul-value
+
 ###### PKU 2005
 Config  |Recall|Precision|F1
 --------|-----:|--------:|---:
 control |.928  |.938     |.933
-cosmul  |.942  |.948     |.945
+i       |.942  |.948     |.945
 
 ###### CityU 2005
 Config  |Recall|Precision|F1
 --------|-----:|--------:|---:
-cosmul  |.940  |.945     |.942
+control |.945  |.948     |.946
+ii      |.940  |.945     |.942
 
 ### todo
 * Replace `score` with one respects character encoding<sup>[1]</sup> and supports full confusion matrix<sup>[2]</sup>.
