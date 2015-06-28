@@ -51,7 +51,7 @@ i       |.942  |.948     |.945
 Config  |Recall|Precision|F1
 --------|-----:|--------:|---:
 control |.945  |.948     |.946
-ii      |.940  |.945     |.942
+i       |.940  |.945     |.942
 
 ### todo
 * Replace `score` with one respects character encoding<sup>[1]</sup> and supports full confusion matrix<sup>[2]</sup>.
