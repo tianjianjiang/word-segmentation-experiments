@@ -3,7 +3,7 @@
 __author__ = 'Mike Tian-Jian Jiang'
 
 import sys
-from subprocess import call
+from subprocess import call, check_output
 
 root = '../'
 
@@ -46,10 +46,14 @@ if 'learn' == mode:
 else:
     args += [inputFilePath]
     tagFilePath = '%sresult/%s-crfsuite-tag.txt' % (root, inputAffix)
-    args += ['>', tagFilePath]
-    call(args)
+    tags = check_output(args, universal_newlines=True)
+    with open(tagFilePath, 'w') as f:
+        f.write(tags)
 
     controlFilePath = '%scontrol/%s-label.txt' % (root, inputCharSrc)
     labelFilePath = '%sresult/%s-c%s-label.txt' % (root, inputAffix, c2)
-    args = ['paste', controlFilePath, tagFilePath, '>', labelFilePath]
-    call(args)
+    controlFile = open(controlFilePath)
+    tagFile = open(tagFilePath)
+    labelFile = open(labelFilePath, 'w')
+    for controlLine, tagLine in zip(controlFile, tagFile):
+        labelFile.write(controlLine.strip() + '\t' + tagLine)

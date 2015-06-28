@@ -3,7 +3,7 @@
 __author__ = 'Mike Tian-Jian Jiang'
 
 import sys
-from subprocess import call
+from subprocess import call, check_output
 
 print('Scoring...')
 
@@ -30,8 +30,10 @@ rebuiltFilePath = '%sresult/%s-c%s-label-word.txt' % (root, inputAffix, c2)
 dicFilePath = '%sgold/%s_training_words.utf8' % (icwb2Folder, corpusName)
 goldFilePath = '%sgold/%s' % (icwb2Folder, inputCharSrc)
 scoreFilePath = '%sresult/%s-c%s-label-word-score.txt' % (root, inputAffix, c2)
-args = [scorerPath, dicFilePath, goldFilePath, rebuiltFilePath, scoreFilePath]
-call(args)
+args = [scorerPath, dicFilePath, goldFilePath, rebuiltFilePath]
+scoreOutput = check_output(args, universal_newlines=True)
+with open(scoreFilePath, 'w') as f:
+    f.write(scoreOutput)
 
 args = ['tail', '-n', '7', scoreFilePath]
 call(args)
