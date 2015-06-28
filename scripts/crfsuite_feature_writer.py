@@ -28,7 +28,14 @@ if __name__ == '__main__':
 
     root = '../'
     corpusName = sys.argv[1]
-    labelFilePrefix = corpusName + '_training.utf8'
+    corpusType = sys.argv[2]
+    if 'training' == corpusType:
+        labelFilePrefix = corpusName + '_training.utf8'
+    else:
+        if 'as' == corpusName:
+            labelFilePrefix = corpusName + '_testing_gold.utf8'
+        else:
+            labelFilePrefix = corpusName + '_test_gold.utf8'
     labelFilePath = '%scontrol/%s-label.txt' % (root, labelFilePrefix)
     featureSrc = labelFilePrefix
     featureFilePath = '%scontrol/%s-crfsuite-label.txt' % (root, featureSrc)
