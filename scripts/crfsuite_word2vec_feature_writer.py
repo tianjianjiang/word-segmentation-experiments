@@ -83,28 +83,59 @@ def encode(x):
 if __name__ == '__main__':
     import sys
 
-    topN = 1
-    d = ('', '')
-    charSeq = [d]
-    modelFilePath = sys.argv[1]
+    root = '../'
+    corpusName = sys.argv[1]
+    size = int(sys.argv[2])
+    window = int(sys.argv[3])
+    negative = int(sys.argv[4])
+    modelSrc = corpusName + '_training.utf8-char.txt'
+    modelAffix = '%s-word2vec_d%dw%dn%d' % (modelSrc, size, window, negative)
+    modelFilePath = '%sword2vec_models/%s.model' % (root, modelAffix)
+
+    corpusType = sys.argv[5]
+    if 'training' == corpusType:
+        labelFilePrefix = corpusName + '_training.utf8'
+    else:
+        if 'as' == corpusName:
+            labelFilePrefix = corpusName + '_testing_gold.utf8'
+        else:
+            labelFilePrefix = corpusName + '_test_gold.utf8'
+    labelFilePath = '%scontrol/%s-label.txt' % (root, labelFilePrefix)
+
+    addOrMul = sys.argv[6]
+    nameOrValue = sys.argv[7]
+    featureSrc = labelFilePrefix + '-' + modelAffix
+    featureAffix = '%s-cos%s_%s_3vec' % (featureSrc, addOrMul, nameOrValue)
+    featureFilePath = '%sexp/%s-crfsuite-label.txt' % (root, featureAffix)
+
+    print('Converting %s' % labelFilePath)
+    print('\tto "%s"...' % featureFilePath)
+
     word2VecModel = Word2Vec.load(modelFilePath)
-    trainingFilePath = sys.argv[2]
-    trainingFile = open(trainingFilePath, 'r')
-    addOrMul = sys.argv[3]
-    nameOrValue = sys.argv[4]
-    labelFilePath = sys.argv[5]
-    labelFile = open(labelFilePath, 'w')
+    labelFile = open(labelFilePath, 'r')
+    featureFile = open(featureFilePath, 'w')
+
+    topN = 1
     featureWriter = CrfsuiteWord2VecFeatureWriter(word2VecModel, topN,
                                                   addOrMul, nameOrValue)
-    for line in trainingFile:
+
+    import os
+    fileStat = os.stat(labelFilePath)
+    byteCount = 0
+
+    d = ('', '')
+    charSeq = [d]
+    for line in labelFile:
+        byteCount += len(line.encode('utf-8'))
         line = line.strip()
         if not line:
             charSeq.append(d)
             labels = featureWriter.output_features(charSeq)
-            labelFile.write(''.join(labels) + '\n')
+            featureFile.write(''.join(labels) + '\n')
             charSeq = [d]
+            print('\t' + '{:.1%}'.format(byteCount/fileStat.st_size), end='\r')
         else:
             fields = line.split('\t')
             charSeq.append((encode(fields[0]), encode(fields[1])))
-    labelFile.close()
-    trainingFile.close()
+
+    print('\n\tdone.')

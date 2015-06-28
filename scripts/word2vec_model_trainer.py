@@ -5,20 +5,29 @@ __author__ = 'Mike Tian-Jian Jiang'
 import sys
 from gensim.models import word2vec
 
-filename = sys.argv[1]
+print('Training word2vec model...')
+
+root = '../'
+corpusFolder = 'char-delimited_texts/'
+corpusName = sys.argv[1]
+corpusFileName = corpusName + '_training.utf8-char.txt'
+corpusFilePath = root + corpusFolder + corpusFileName
+
 size = int(sys.argv[2])
 window = int(sys.argv[3])
 negative = int(sys.argv[4])
-output = sys.argv[5]
+suffix = '-word2vec_d%dw%dn%d.model' % (size, window, negative)
+modelFilePath = '%sword2vec_models/%s%s' % (root, corpusFileName, suffix)
 
-print('reading char-delimited texts...')
-data = word2vec.LineSentence(filename)
-print('done.')
-print('training...')
-model = word2vec.Word2Vec(sentences=data, size=size, window=window, min_count=1, workers=4,
-                          negative=negative)
-print('done.')
-print('saving model...')
+print('\treading "%s"...' % corpusFilePath)
+data = word2vec.LineSentence(corpusFilePath)
+
+print('\ttraining...')
+model = word2vec.Word2Vec(sentences=data, size=size, window=window,
+                          min_count=1, workers=4, negative=negative)
+
+print('\twriting "%s"...' % modelFilePath)
 model.init_sims(replace=True)
-model.save(output)
-print('done.')
+model.save(modelFilePath)
+
+print('\tdone.')

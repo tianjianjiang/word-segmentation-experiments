@@ -4,9 +4,25 @@ __author__ = 'Mike Tian-Jian Jiang'
 
 import sys
 
-corpusFilePath = sys.argv[1]
+root = '../'
+corpusFolder = 'icwb2-data/'
+corpusName = sys.argv[1]
+corpusType = sys.argv[2]
+if 'training' == corpusType:
+    corpusFileNameSuffix = '_training.utf8'
+else:
+    if 'as' == corpusName:
+        corpusFileNameSuffix = '_testing_gold.utf8'
+    else:
+        corpusFileNameSuffix = '_test_gold.utf8'
+corpusFileName = corpusName + corpusFileNameSuffix
+corpusFilePath = root + corpusFolder + corpusType + '/' + corpusFileName
+labelFilePath = root + 'control/' + corpusFileName + '-label.txt'
+
+print('Converting "%s"' % corpusFilePath)
+print('\tto "%s"...' % labelFilePath)
+
 corpusFile = open(corpusFilePath)
-labelFilePath = sys.argv[2]
 labelFile = open(labelFilePath, 'w')
 for line in corpusFile:
     words = line.split()
@@ -30,3 +46,5 @@ for line in corpusFile:
         labelFile.write('\n'.join(c + '\t' + l for c, l in zip(chars, labels))
                         + '\n')
     labelFile.write('\n')
+
+print('\tdone.')
