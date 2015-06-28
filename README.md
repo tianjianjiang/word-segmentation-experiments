@@ -53,6 +53,11 @@ Config  |Recall|Precision|F1
 control |.945  |.948     |.946
 i       |.940  |.945     |.942
 
+###### MSR 2005
+Config  |Recall|Precision|F1
+--------|-----:|--------:|---:
+control |.970  |.973     |.972
+
 ### todo
 * Replace `score` with one respects character encoding<sup>[1]</sup> and supports full confusion matrix<sup>[2]</sup>.
 * Tensor-based embeddings<sup>[3]</sup>
