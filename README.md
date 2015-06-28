@@ -21,12 +21,14 @@ For example:
  * *something*(B) **OP** __~__*something*(A)&nbsp;**OP** __~__*something*(C)
 
 ### control group
+```
 U01:%x[-1,0]
 U02:%x[0,0]
 U03:%x[1,0]
 U10:%x[-1,0]/%x[0,0]
 U11:%x[0,0]/%x[1,0]
 U20:%x[-1,0]/%x[1,0]
+```
 
 ### experiment design
 * *something*: word2vec character-embeddings
