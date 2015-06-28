@@ -32,6 +32,11 @@ Config  |Recall|Precision|F1
 control |.925  |.938     |.932
 cosmul  |.941  |.947     |.944
 
+###### PKU 2005
+Config  |Recall|Precision|F1
+--------|-----:|--------:|---:
+cosmul  |.940  |.945     |.942
+
 ### todo
 * Replace `score` with one respects character encoding<sup>[1]</sup> and supports full confusion matrix<sup>[2]</sup>.
 * Tensor-based embeddings<sup>[3]</sup>
