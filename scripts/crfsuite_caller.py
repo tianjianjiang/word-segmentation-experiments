@@ -55,8 +55,8 @@ if 'learn' == mode:
 else:
     args += [inputFilePath]
     tagFilePath = '%sresult/%s-c%s-tag.txt' % (root, inputAffix, c2)
-    tags = check_output(args, universal_newlines=True)
-    with open(tagFilePath, 'w') as f:
+    tags = check_output(args)
+    with open(tagFilePath, 'wb') as f:
         f.write(tags)
 
     controlFilePath = '%scontrol/%s-label.txt' % (root, inputCharSrc)

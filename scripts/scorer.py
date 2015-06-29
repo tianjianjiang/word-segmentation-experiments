@@ -36,8 +36,8 @@ dicFilePath = '%sgold/%s_training_words.utf8' % (icwb2Folder, corpusName)
 goldFilePath = '%sgold/%s' % (icwb2Folder, inputCharSrc)
 scoreFilePath = '%sresult/%s-c%s-label-word-score.txt' % (root, inputAffix, c2)
 args = [scorerPath, dicFilePath, goldFilePath, rebuiltFilePath]
-scoreOutput = check_output(args, universal_newlines=True)
-with open(scoreFilePath, 'w') as f:
+scoreOutput = check_output(args)
+with open(scoreFilePath, 'wb') as f:
     f.write(scoreOutput)
 
 args = ['tail', '-n', '7', scoreFilePath]
