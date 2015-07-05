@@ -24,7 +24,7 @@ data = word2vec.LineSentence(corpusFilePath)
 
 print('\ttraining...')
 model = word2vec.Word2Vec(sentences=data, size=size, window=window,
-                          min_count=1, workers=4, negative=negative)
+                          min_count=0, workers=4, negative=negative)
 
 print('\twriting "%s"...' % modelFilePath)
 model.init_sims(replace=True)
