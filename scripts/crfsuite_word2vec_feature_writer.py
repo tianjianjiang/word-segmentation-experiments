@@ -56,6 +56,24 @@ class CrfsuiteWord2VecFeatureWriter:
                     else:
                         yield 'U9%d%de=%s:%g' % (f_index, j, '1', e[j][1])
 
+    def get_least_match_feature(self, center, left, right):
+        if '' == left:
+            e = '<s>'
+        elif '' == right:
+            e = '</s>'
+        else:
+            check_list = [left, center, right]
+            cache_key = ''.join(check_list)
+            if cache_key not in self.feature_cache:
+                try:
+                    e = self.model.doesnt_match(check_list)
+                except ValueError:
+                    e = 'UNK'
+                self.feature_cache[cache_key] = e
+            else:
+                e = self.feature_cache[cache_key]
+        yield 'U9e=' + e
+
     def output_features(self, seq):
         for i in range(1, len(seq) - 1):
             fs = [
@@ -69,7 +87,10 @@ class CrfsuiteWord2VecFeatureWriter:
             left = seq[i - 1][0]
             current = seq[i][0]
             right = seq[i + 1][0]
-            fs += list(self.get_feature(current, left, right))
+            if 'least' == self.add_or_mul:
+                fs += list(self.get_least_match_feature(current, left, right))
+            else:
+                fs += list(self.get_feature(current, left, right))
 
             yield '%s\t%s\n' % (seq[i][1], '\t'.join(fs))
 
