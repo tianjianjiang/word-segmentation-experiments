@@ -43,7 +43,7 @@ class CrfsuiteWord2VecFeatureWriter:
             positives = formula[0]
             negatives = formula[1]
             f_index += 1
-            cache_key = repr(positives) + repr(negatives)
+            cache_key = ''.join(positives) + '~' + ''.join(negatives)
             if cache_key not in self.feature_cache:
                 e = self.get_most_similar(positives, negatives)
                 self.feature_cache[cache_key] = e
