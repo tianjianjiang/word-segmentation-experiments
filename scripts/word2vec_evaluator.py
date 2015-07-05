@@ -6,25 +6,32 @@ from gensim.models import Word2Vec
 import sys
 
 filename = sys.argv[1]
+triCharBoundariesFile = sys.argv[2]
+triCharBoundariesMap = {}
 model = Word2Vec.load(filename)
-
-
-def s(p, n, c=5, m=model):
-    print('+'.join(p) + '-' + '-'.join(n))
-    cnt = 1
-    result = m.most_similar_cosmul(positive=p, negative=n, topn=c)
-    print('3cosmul')
-    for r in result:
-        print(cnt, r[0], r[1])
-        cnt += 1
-    cnt = 1
-    result = m.most_similar(positive=p, negative=n, topn=c)
-    print('3cosadd')
-    for r in result:
-        print(cnt, r[0], r[1])
-        cnt += 1
-
-positives = sys.argv[2]
-negatives = sys.argv[3]
-
-s(list(positives), list(negatives), int(sys.argv[4]))
+with open(triCharBoundariesFile) as f:
+    for line in f:
+        entry = line.strip().split('\t')
+        triChar = entry[0]
+        boundary = entry[1]
+        count = int(entry[2])
+        if triChar in triCharBoundariesMap:
+            if triCharBoundariesMap[triChar][-1][1] < count:
+                triCharBoundariesMap[triChar] = [(boundary, count)]
+            elif triCharBoundariesMap[triChar][-1][1] == count:
+                triCharBoundariesMap[triChar].append((boundary, count))
+        else:
+            triCharBoundariesMap[triChar] = [(boundary, count)]
+penalty = 0
+totalPenalty = 0
+for triChar, entries in triCharBoundariesMap.items():
+    entryMap = {entry[0]: entry[1] for entry in entries
+                if '<s>' != entry[0] and '</s>' != entry[0]}
+    if len(entryMap) == 0:
+        continue
+    least = model.doesnt_match(list(triChar))
+    cost = entries[0][1]
+    totalPenalty += cost
+    if least not in entryMap:
+        penalty += cost
+print(penalty, '/', totalPenalty)
