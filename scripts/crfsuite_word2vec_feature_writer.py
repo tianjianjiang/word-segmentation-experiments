@@ -74,6 +74,48 @@ class CrfsuiteWord2VecFeatureWriter:
                 e = self.feature_cache[cache_key]
         yield 'U9e=' + e
 
+    def get_closeness_feature(self, center, left, right):
+        if '' == left:
+            left = '<s>'
+        elif '' == right:
+            right = '</s>'
+        check_list = [left, center, right]
+        cache_key = ''.join(check_list)
+        if cache_key not in self.feature_cache:
+            if '<s>' == left:
+                positives = [right]
+            elif '</s>' == right:
+                positives = [left]
+            else:
+                positives = [left, right]
+            try:
+                diff = self.model.most_similar_cosmul(
+                    positives, [center], topn=1)[0]
+            except KeyError:
+                diff = (None, None)
+            if '<s>' != left and diff[0]:
+                left_dist = self.model.similarity(left, diff[0])
+            else:
+                left_dist = None
+            if '</s>' != right and diff[0]:
+                right_dist = self.model.similarity(right, diff[0])
+            else:
+                right_dist = None
+            f = ((left + center, left_dist), (center + right, right_dist))
+            self.feature_cache[cache_key] = f
+        else:
+            f = self.feature_cache[cache_key]
+        for i, e in enumerate(f):
+            if 'name' == self.name_or_value:
+                if e[1]:
+                    yield 'U9%de=%s' % (i, e[0])
+            elif 'value' == self.name_or_value:
+                if e[1]:
+                    yield 'U9%de=%s:%g' % (i, '1', e[1])
+            else:
+                if e[1]:
+                    yield 'U9%de=%s:%g' % (i, e[0], e[1])
+
     def output_features(self, seq):
         for i in range(1, len(seq) - 1):
             fs = [
@@ -89,6 +131,8 @@ class CrfsuiteWord2VecFeatureWriter:
             right = seq[i + 1][0]
             if 'least' == self.add_or_mul:
                 fs += list(self.get_least_match_feature(current, left, right))
+            elif 'dist' == self.add_or_mul:
+                fs += list(self.get_closeness_feature(current, left, right))
             else:
                 fs += list(self.get_feature(current, left, right))
 
