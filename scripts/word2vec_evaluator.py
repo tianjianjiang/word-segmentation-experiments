@@ -5,25 +5,23 @@ __author__ = 'Mike Tian-Jian Jiang'
 from gensim.models import Word2Vec
 import sys
 import multiprocessing
+from time import sleep
 
 
 class Word2vecEvaluator:
-    def __init__(self, word2vec_model, total_checks):
+    def __init__(self, word2vec_model):
         self.model = word2vec_model
-        self.total_checks = total_checks
 
     def eval(self, record):
-        checked_id = record[0]
-        tri_char = record[1]
-        entries = record[2]
-        print('{:>8} of {: <20}'.format(checked_id, self.total_checks),
-              end='\r', file=sys.stderr)
+        (queue, tri_char, entries) = record
         freq = entries[0][1]
         entry_map = {e[0]: e[1] for e in entries
                      if '<s>' != e[0] and '</s>' != e[0]}
         if len(entry_map) != 1:
+            queue.put(1)
             return freq, 0
         if tri_char.startswith('<s>') or tri_char.endswith('</s>'):
+            queue.put(1)
             return freq, 0
         chars = list(tri_char)
         sim_vec = self.model.most_similar_cosmul(
@@ -37,7 +35,9 @@ class Word2vecEvaluator:
         else:
             neg_char = None
         if not neg_char or neg_char not in entry_map:
+            queue.put(1)
             return freq, freq
+        queue.put(1)
         return freq, 0
 
 
@@ -62,15 +62,23 @@ if __name__ == '__main__':
                 triCharBoundaryMap[triChar] = [(boundary, count)]
 
     print('threading...', file=sys.stderr)
-    pool = multiprocessing.Pool(processes=2)
-    tester = Word2vecEvaluator(model, len(triCharBoundaryMap))
+    tester = Word2vecEvaluator(model)
+    pool = multiprocessing.Pool(processes=8)
+    manager = multiprocessing.Manager()
+    q = manager.Queue()
     penalty = 0
     totalPenalty = 0
-    items = [(i, item[0], item[1])
-             for i, item in enumerate(triCharBoundaryMap.items())]
-    for cost, waste in pool.imap_unordered(tester.eval, items, chunksize=100000):
+    totalCount = len(triCharBoundaryMap)
+    items = [(q, item[0], item[1]) for item in triCharBoundaryMap.items()]
+    rs = pool.map_async(tester.eval, items, chunksize=100000)
+    while not rs.ready():
+        completed = q.qsize()
+        progress = completed / totalCount
+        print('{:>8,}/{:<,}={:.1%}'.format(completed, totalCount, progress),
+              end='\r', file=sys.stderr)
+        sleep(2)
+    for cost, waste in rs.get():
         totalPenalty += cost
         penalty += waste
-
     print()
     print(penalty, '/', totalPenalty)
